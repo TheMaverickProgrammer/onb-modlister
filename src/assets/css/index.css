@@ -107,6 +107,10 @@
     @apply absolute px-8 py-2 text-xl text-center transition-all duration-200 bg-blue-300 rounded-md bottom-4 right-2 hover:bg-blue-400;
   }
 
+  .random_btn {
+    @apply absolute px-8 py-2 text-xl text-center transition-all duration-200 bg-blue-300 rounded-md top-4 right-2 hover:bg-blue-400;
+  }
+
   .msg_box_dock {
     @apply bg-white md:hidden h-10 min-w-[300px] w-full absolute left-0 top-[-100px] border-2 border-black px-4 py-2;
   }

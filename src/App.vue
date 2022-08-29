@@ -88,6 +88,8 @@
       </draggable>
 
       <button class="download_btn">Download</button>
+      
+      <button class="random_btn" @click="handleRandomPack">Random</button>
     </div>
   </div>
 </template>
@@ -181,6 +183,11 @@ export default {
 
     handleSearchChange(data) {
       this.searchFilter = data;
+    },
+
+    handleRandomPack() {
+      let idx = Math.random()*this.mods.length;
+      this.checkout.push(...this.mods.splice(idx, 1));
     }
   },
 };
