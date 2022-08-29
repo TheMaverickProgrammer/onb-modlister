@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "custom.css";
+
+@layer components {
+  .header {
+    @apply fixed z-50 w-full p-2 font-medium text-center bg-white shadow-md;
+  }
+
+  .game_pic {
+    @apply relative ml-[10px];
+  }
+
+  .title {
+    @apply absolute top-0 left-0 h-auto text-base font-bold;
+  }
+
+  .chip_inner {
+    @apply p-1 bg-[rgba(0,0,0,0.66)] w-[95%] ml-[9px];
+  }
+
+  .chip_codes {
+    @apply flex items-center text-white opacity-75 drop-shadow-[1px_1px_rgba(0,0,0,71%)];
+  }
+
+  .description {
+    @apply text-sm leading-6 font-semibold border-x ml-[9px] rounded shadow pt-[5px] pl-[8px] min-h-[80px];
+  }
+
+  .detail_view {
+    @apply absolute p-[6px] bg-[rgba(22,22,22,0.842)] text-white shadow-[2px_5px_10px_rgba(0,0,0,0.287)];
+  }
+
+  .detail_view p {
+    @apply m-1 w-max;
+  }
+
+  .chip_container {
+    @apply mb-[40px] mt-4 mx-[10px] duration-200 list-none;
+    filter: drop-shadow(0px 1px 2px black) grayscale(10%) brightness(90%);
+  }
+
+  .chip_container:hover {
+    @apply duration-200;
+    filter: drop-shadow(0px 25px 5px rgba(0, 0, 0, 0.455));
+    transform: rotate3d(1, 0, 0, -20deg);
+  }
+
+  .chip-box {
+    @apply px-4 pt-4 border-2 rounded-md cursor-pointer h-72 sm:h-80 w-[180px] sm:w-[200px];
+  }
+
+  .available_bin {
+    @apply flex flex-wrap last:mb-64;
+  }
+
+  .shopping_bin {
+    @apply fixed p-4 pr-16 pl-32 bottom-0 w-full bg-white h-60 shadow-[0_-4px_6px_-4px_rgba(0,0,0,0.1)] z-40;
+    animation: slideUp 3s;
+  }
+
+  .bin {
+    @apply relative flex h-full p-4 overflow-x-scroll overflow-y-hidden border-4 border-black border-dashed ml-[-70px] md:ml-0 mr-[6rem];
+
+    background-image: url("@/assets/images/dragon_drop.png");
+    background-position: center;
+    background-size: 100px;
+    background-repeat: no-repeat;
+  }
+
+  .bin li {
+    @apply -mx-10 -mt-10 scale-50;
+  }
+
+  .bin li:hover {
+    @apply -mx-10 -mt-10 scale-50;
+  }
+
+  .msg_box_outer {
+    @apply absolute bg-black h-[400px] max-w-[700px] md:min-w-[700px] left-24  bottom-16  p-4 text-center text-base hidden md:block;
+    /* @apply absolute bg-black h-[700px] w-screen left-24 bottom-[-80px]  p-4 text-center text-base hidden md:block; */
+  }
+
+  .msg_box_inner {
+    @apply flex items-center justify-center w-auto text-black bg-gradient-to-r from-white to-gray-200;
+  }
+  .hamburgerIcon {
+    @apply absolute w-[30px] h-[25px] text-lg cursor-pointer left-5 top-2 -mt-1 md:mt-1;
+  }
+
+  .hamburgerIcon div {
+    @apply w-full h-1 my-1 bg-black rounded;
+    content: "";
+  }
+
+  .filters {
+    @apply flex flex-col items-center w-full mt-10 text-center list-none;
+  }
+
+  .filters .item {
+    @apply w-full border-b cursor-pointer hover:shadow-[inset_0px_2px_4px_1px_rgba(0,0,0,0.1)];
+  }
+
+  .download_btn {
+    @apply absolute px-8 py-2 text-xl text-center transition-all duration-200 bg-blue-300 rounded-md bottom-4 right-2 hover:bg-blue-400;
+  }
+
+  .msg_box_dock {
+    @apply bg-white md:hidden h-10 min-w-[300px] w-full absolute left-0 top-[-100px] border-2 border-black px-4 py-2;
+  }
+}
+
+.msg_box_outer {
+  clip-path: polygon(
+    33% 34%,
+    100% 17%,
+    100% 79%,
+    32% 58%,
+    26% 70%,
+    18% 57%,
+    12% 63%,
+    1% 52%,
+    13% 51%,
+    15% 43%,
+    26% 47%
+  );
+}
+
+.msg_box_inner {
+  clip-path: inherit;
+  margin-top: -5px;
+  margin-left: -10px;
+  width: 104%;
+  height: 104%;
+  transform: scaleY(0.8);
+}
+
+.message {
+  margin-top: -10px;
+  margin-left: 150px;
+  text-align: left;
+}

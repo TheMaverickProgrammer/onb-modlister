@@ -1,72 +1,156 @@
 <template>
   <div id="app">
-    <div class='wrap'>
-      <div class='top-plane'></div>
-      <div class='bottom-plane'></div>
+    <!-- higsby -->
+    <div class="fixed bottom-0 z-50">
+      <img
+        src="@/assets/images/hman.png"
+        alt="hman"
+        class="fixed bottom-0 -scale-x-100 translate-y-[400px] left-[-100px] hidden md:block hman_comeIn"
+      />
+      <!-- TODO: improve dialog box for site news -->
+      <!--<div
+        class="msg_box_outer -rotate-4 msg_box_slideIn"
+        style="display: none"
+      >
+        <div class="-mt-5 rotate-4 msg_box_inner">
+          <div class="message">Message Box</div>
+        </div>
+      </div>-->
     </div>
-    <div class="container-fluid">
-      <img src="@/assets/hman.png" class="hman">
-      <div class="row">
-        <div class="col-md-12 title">
-          <h1>Higsby's Clearance Bin</h1>
+
+    <!-- Navbar -->
+    <div class="header">
+      <button class="hamburgerIcon" @click.prevent="toggle()">
+        <!-- 3 divs are needed for the hamburger -->
+        <div :class="[!isSidebar ? '' : 'active']"></div>
+        <div :class="[!isSidebar ? '' : 'active']"></div>
+        <div :class="[!isSidebar ? '' : 'active']"></div>
+      </button>
+      <h1 class="text-sm md:text-[2.5rem] md:p-2">Higsby's Clearance Bin</h1>
+    </div>
+
+    <div class="flex">
+      <div class="flex" :class="[!isSidebar ? 'slideIn' : ' slideOut']">
+        <Sidebar :isSidebar="isSidebar" @search="handleSearchChange" />
+      </div>
+      <!-- Content -->
+      <div class="pt-16">
+        <div>
+          <draggable
+            ghost-class="ghost"
+            group="mods"
+            :list="mods"
+            @change="handleCheckout"
+            @start="handleDragStart"
+            @end="handleDrop"
+            class="available_bin"
+          >
+            <chip-widget
+              v-for="(mod, idx) in filteredChips"
+              :key="idx"
+              :type="mod.type"
+              :title="mod.title"
+              :damage="mod.damage"
+              :description="mod.description"
+              :code="mod.code"
+              :previewUrl="mod.previewUrl"
+              :iconUrl="mod.iconUrl"
+              :style="animationOrder(idx)"
+            />
+          </draggable>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-10">
-          <div class="available-bin">
-            <ul id="main-chip">
-            <draggable ghost-class="ghost" group="mods" :list="mods" @change="handleCheckout" @start="handleDragStart">
-              <chip-widget v-for="(mod, idx) in mods" :key="idx"
-              :type="randomType()"/>
-            </draggable>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="shopping-cart">
-            <img src="@/assets/dragon_drop.png" class="dragon-drop">
-            <ul id="main-chip">
-              <draggable ghost-class="ghost" group="mods" :list="checkout" @change="handleRestore" @start="handleDragStart">
-                <chip-widget v-for="(mod, idx) in checkout" :key="idx"/>
-              </draggable>
-            </ul>
-          </div>
-        </div>
-      </div>
+    </div>
+    <div class="shopping_bin">
+      <!--<div class="msg_box_dock top-[-40px]">Message Box</div>-->
+
+      <draggable
+        ghost-class="ghost"
+        group="mods"
+        :list="checkout"
+        @change="handleRestore"
+        @start="handleDragStart"
+        class="bin"
+        :class="dropAnim"
+      >
+      <chip-widget
+              v-for="(mod, idx) in checkout"
+              :key="idx"
+              :type="mod.type"
+              :title="mod.title"
+              :damage="mod.damage"
+              :description="mod.description"
+              :code="mod.code"
+              :previewUrl="mod.previewUrl"
+              :iconUrl="mod.iconUrl"
+              :style="animationOrder(idx)"
+            />
+      </draggable>
+
+      <button class="download_btn">Download</button>
     </div>
   </div>
 </template>
 
 <script>
-import ChipWidget from './components/ChipWidget.vue'
-import draggable from 'vuedraggable'
+import ChipWidget from "@/components/ChipWidget.vue";
+import Sidebar from "@/components/Sidebar.vue";
+
+import draggable from "vuedraggable";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     ChipWidget,
-    draggable
+    draggable,
+    Sidebar,
   },
 
   data() {
     return {
-      mods: Array(50),
+      mods: this.populateDummyData(),
       checkout: [],
       sfx: {
-        drop: new Audio(require('@/assets/sounds/drop.mp3')),
-        pickup: new Audio(require('@/assets/sounds/pickup.mp3'))
-      }
+        drop: new Audio(require("@/assets/sounds/drop.mp3")),
+        pickup: new Audio(require("@/assets/sounds/pickup.mp3")),
+      },
+      dropAnim: "",
+      isSidebar: false,
+      searchFilter: "",
+    };
+  },
+
+  mounted() {
+
+  },
+
+  computed: {
+    filteredChips() {
+      let regex = new RegExp(`${this.searchFilter}.*`);
+      return this.mods.filter(x => regex.test(x.name));
     }
   },
 
   methods: {
+    populateDummyData() {
+      let arr = [];
+
+      for(let i = 0; i < 100; i++) {
+        arr[i] = {name: 'Test', description: 'blah blah blah', type: this.randomType(), damage: '888', code: 'Z', previewUrl: "https://metaperficient.com/mods.battlenetwork.io/game1.jpg", iconUrl: "http://mods.battlenetwork.io/images/com_DJ_card_DarkLegnofAcrius_icon.png"};
+      }
+
+      return arr;
+    },
+
     handleCheckout(evt) {
-      this.checkout.push(evt.object);
+      console.log(evt);
+      this.checkout.push(evt.removed.element);
       this.sfx.drop.play();
     },
 
     handleRestore(evt) {
-      this.mods.push(evt.object);
+      console.log(evt);
+      this.mods.push(evt.added.element);
       this.sfx.drop.play();
     },
 
@@ -74,96 +158,73 @@ export default {
       this.sfx.pickup.play();
     },
 
+    handleDrop() {
+      console.log("Dropped");
+      this.dropAnim = "drop_anim";
+      const vm = this;
+      setTimeout(1000, () => {
+        vm.dropAnim = "";
+      }); // reset the variable after 1000 ms (1 second)
+    },
+
     randomType() {
-      const types = ['Giga','Mega','Dark','Standard']
-      return types[Math.floor(Math.random()* types.length)];
+      const types = ["Giga", "Mega", "Dark", "Standard"];
+      return types[Math.floor(Math.random() * types.length)];
+    },
+
+    toggle() {
+      this.isSidebar = !this.isSidebar;
+    },
+    animationOrder(idx) {
+      return "--animation-order: " + idx + ";";
+    },
+
+    handleSearchChange(data) {
+      this.searchFilter = data;
     }
-  }
-}
+  },
+};
 </script>
 
 <style>
-#app {
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
-
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-  user-select: none;
+.slideIn {
+  transform: translateX(-300px);
+  transition: all 250ms ease-in-out;
+  display: none;
+  margin-right: -150px;
 }
 
-.ghost {
-  opacity:50%;
-  filter:blur(10px) !important;
+.slideOut {
+  transform: translateX(0);
+  transition: all 250ms ease-in-out;
+  display: block;
+  margin-right: 10px;
 }
 
-.shopping-cart {
-  height: 100vh;
-  width: 100%;
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='8' stroke='%23333' stroke-width='8' stroke-dasharray='12%2c 14' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
-  border-radius: 8px;
-  overflow-y: scroll;
-  scrollbar-width: none;
-  padding-left:15%;
+.hman_comeIn {
+  animation: comeIn 3s;
 }
 
-.available-bin {
-  height: 100vh;
-  width: 100%;
-  overflow-y: scroll;
-  scrollbar-width: thin;
-  scrollbar-color:white transparent;
+@keyframes comeIn {
+  0% {
+    left: -1000px;
+  }
+  100% {
+    left: -100px;
+  }
+}
+.msg_box_slideIn {
+  animation: msg_slideIn 1s;
 }
 
-.dragon-drop {
-  width: 20%;
-  padding-top: 50%;
-  margin-left: 25%;
-  top: 0px;
-  display:inline;
-  position:absolute;
-  z-index: -1000;
-  opacity: 100%;
+@keyframes msg_slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-200px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
-
-.title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color:rgba(255, 255, 255, 0.959);
-  border-bottom-color:rgb(185, 185, 185);
-  border-bottom-width:1px;
-  border-bottom-style: solid;
-  margin-bottom: 1%;
-  box-shadow: 0 0 10px rgb(156, 156, 156);
-}
-
-.hman {
-  position:fixed;
-  bottom:0;
-  left:-100px;
-  transform:scaleX(-1) translateY(400px);
-  z-index: 1000;
-}
-
-.slidein {
-  -webkit-animation-name: slidein; 
-  animation-name: slidein;
-  -webkit-animation-duration: 1s;
-  animation-duration: 1s;
-}
-
-@keyframes slidein {
-    0%  {-webkit-transform: translateX(-100px);} 
-    100% {-webkit-transform: translateX(0px);}  
-}
-
-@-webkit-keyframes slidein { 
-    0%  {-webkit-transform: translateX(-100px);} 
-    100% {-webkit-transform: translateX(0px);} 
-} 
 </style>
